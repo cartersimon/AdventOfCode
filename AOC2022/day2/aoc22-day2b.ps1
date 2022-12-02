@@ -2,7 +2,6 @@
 
 # Get input data
 $guide = Get-Content .\input.txt
-
 $myTotalScore = 0
 
 # Get value of a play... Rock: 1, Paper: 2, Scissors: 3 
@@ -10,9 +9,12 @@ function Get-Value {
     param (
         [Parameter(Mandatory)]  [String]$RPS
     )
-    if( $RPS -eq "X" -or $RPS -eq "A" ) { return 1 }
-    if ($RPS -eq "Y" -or $RPS -eq "B" ) { return 2 }
-    if ($RPS -eq "Z" -or $RPS -eq "C" ) { return 3 }
+    switch ($RPS) {
+        "A" { return 1 }
+        "B" { return 2 }
+        "C" { return 3 }
+        Default {}
+    }
 }
 
 function WinLoseDraw {
@@ -20,24 +22,25 @@ function WinLoseDraw {
         [String]$me,
         [String]$opp
     )
-    switch ($me) {
-        "X" { 
-            if ($opp -eq  "C") { return 6} 
-            elseif ($opp -eq "A") { return 3}
+    switch ($opp) {
+        "A" { 
+            if ($me -eq  "B") { return 6} # Win
+            elseif ($me -eq "A") { return 3} # Draw
+            else { return 0 } # Lose
+        }
+        "B" {
+            if ($me -eq  "C") { return 6} 
+            elseif ($me -eq "B") { return 3}
             else { return 0 }
         }
-        "Y" {
-            if ($opp -eq  "A") { return 6} 
-            elseif ($opp -eq "B") { return 3}
-            else { return 0 }
-        }
-        "Z" {
-            if ($opp -eq  "B") { return 6} 
-            elseif ($opp -eq "C") { return 3}
+        "C" {
+            if ($me -eq  "A") { return 6} 
+            elseif ($me -eq "C") { return 3}
             else { return 0 }
         }
         Default {}
     }
+
 } 
 
 function GetNextPlay {
@@ -63,9 +66,7 @@ function GetNextPlay {
         }
         Default {}
     }
-    
 }
-
 
 # Go thru all games
 foreach ( $game in $guide ){
@@ -81,6 +82,4 @@ foreach ( $game in $guide ){
     $myTotalScore += WinLoseDraw $myNextPlay $opponentPlays
 }
 
-# getting 12248, too high
-# 4928, too low
 $myTotalScore
